@@ -201,11 +201,11 @@ function signInView(){
   };
   return h('div', {class:'screen', style:'background:radial-gradient(circle at 50% 18%,rgba(42,34,21,.95) 0%,rgba(11,10,8,0) 58%)'},
     h('div', {class:'pad stack', style:'align-items:center;text-align:center;gap:16px;padding-top:90px'},
-      h('div', {class:'logo glint', style:'width:92px;height:92px;border-radius:50%;border:1.5px solid #E8C46A;box-shadow:0 0 30px rgba(232,196,106,.35);display:grid;place-items:center'}, h('span', {class:'disp gt', style:'font-size:52px;font-weight:700', text:'A'})),
+      h('div', {style:'width:92px;height:92px;border-radius:50%;border:2px solid transparent;background:radial-gradient(circle at 50% 40%,#1E1810,#0B0A08) padding-box,var(--metal) border-box;box-shadow:0 0 30px rgba(232,196,106,.35);display:grid;place-items:center'}, h('span', {class:'disp gt', style:'font-size:52px;font-weight:700', text:'A'})),
       brand(46),
       h('p', {class:'muted', style:'margin:0;line-height:1.5', text:'Private messaging for founders, creators and icons. By invitation only.'}),
       h('span', {class:'badge-test', text:'Founding test'}),
-      h('button', {class:'btn glint', style:'width:100%;max-width:340px;margin-top:18px', onclick: go}, 'Continue with Google'),
+      h('button', {class:'btn', style:'width:100%;max-width:340px;margin-top:18px', onclick: go}, 'Continue with Google'),
       h('p', {class:'note', style:'max-width:320px', text:'Use the Google email SP invited. If the link opened inside WhatsApp or another app, open it in Chrome or Safari first.'})));
 }
 function notInvitedView(){
@@ -252,7 +252,7 @@ function joinView(){
       h('input', {type:'checkbox', id:'j-adult', style:'width:20px;height:20px;accent-color:#C9A24B;margin-top:1px;flex:none'}),
       h('span', {text:'I am 18 or older and understand this is an early test. Test chats are not end-to-end encrypted yet, so please keep them light.'})),
     h('p', {id:'j-err', class:'note', style:'color:var(--urgent);margin:0;min-height:18px', role:'alert'}),
-    h('button', {class:'btn glint', id:'j-go', type:'submit'}, 'Take my seat')
+    h('button', {class:'btn', id:'j-go', type:'submit'}, 'Take my seat')
   );
   return h('div', {class:'screen', style:'background:radial-gradient(circle at 50% 10%,rgba(42,34,21,.95) 0%,rgba(11,10,8,0) 55%)'},
     h('div', {class:'pad stack', style:'gap:22px'},
@@ -360,7 +360,7 @@ function cardTab(){
   ];
   return h('div', {class:'pad'},
     head('My membership', 'My Card'),
-    h('div', {class:'mcard glint'},
+    h('div', {class:'mcard'},
       h('div', {class:'row'}, h('span', {class:'disp gt', style:'font-size:24px;font-weight:700;letter-spacing:2px;flex:1', text:'AURUM'}), h('span', {class:'tier', text:'FOUNDING'})),
       h('div', {class:'stack'}, h('span', {class:'disp gt', style:'font-size:42px;font-weight:700', text:'@' + (m.handle || 'member')}),
         h('span', {class:'muted', style:'font-size:12px', text:(m.role || 'Member') + ' · Founding member No. ' + pad4(m.no)})),
@@ -486,7 +486,7 @@ function promiseCard(m, chat){
   const statusText = status === 'proposed' ? (mine ? 'Waiting for ' + handleOf(otherOf(chat)) + ' to accept' : handleOf(m.from) + ' made you a promise')
     : status === 'sealed' ? 'Sealed · cannot be edited' : 'Kept · promise fulfilled';
   return h('div', {class:'promise'},
-    h('div', {class:'seal' + (sealed ? ' on glint' : ''), 'aria-hidden':'true', text:'A'}),
+    h('div', {class:'seal' + (sealed ? ' on' : ''), 'aria-hidden':'true', text:'A'}),
     h('div', {class:'label', style:'color:var(--gold)', text: status === 'kept' ? 'Promise kept' : 'Promise'}),
     h('p', {class:'disp', style:'font-size:20px;color:var(--text);margin:6px 0', text: m.text}),
     p.due ? h('div', {class:'note', text:'By ' + new Date(p.due + 'T00:00').toLocaleDateString([], {day:'numeric', month:'short', year:'numeric'})}) : null,

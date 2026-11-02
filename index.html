@@ -13,7 +13,9 @@
   --ink:#0B0A08; --night:#100E0A; --surface:#16140F; --raised:#1C1912; --line:#221E16; --edge:#3A3222; --bronze:#5A4A26;
   --gold:#C9A24B; --gold-l:#E8C97A; --gold-p:#F5DFA0; --gold-d:#B8933A;
   --text:#F3EBDD; --muted:#A69C8A; --urgent:#E58B6B; --ok:#9CC79A;
-  --metal:linear-gradient(115deg,#8C6A24 0%,#D4AF37 18%,#FFF6CC 32%,#E8C46A 44%,#A87F2B 58%,#F7E08F 74%,#FFF9DD 82%,#C9A24B 100%);
+  --glitter:linear-gradient(transparent,transparent);
+  --metal-base:linear-gradient(115deg,#7E5A1C 0%,#C99A3A 16%,#F4D888 30%,#FFF3C8 37%,#E3B654 48%,#A27426 62%,#E9C46C 78%,#FBE6A6 88%,#B98B35 100%);
+  --metal:var(--glitter),var(--metal-base);
   --glow:0 0 18px rgba(232,196,106,.32);
   --display:"Cormorant Garamond","Iowan Old Style",Georgia,serif;
   --body:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -93,35 +95,26 @@ textarea.field{resize:vertical;min-height:80px;line-height:1.45}
 .opt label:has(input:focus-visible){outline:2px solid var(--gold-l);outline-offset:2px}
 .note{font-size:12px;color:var(--muted);line-height:1.5}
 .badge-test{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-l);border:1px solid var(--bronze);border-radius:10px;padding:3px 8px}
-/* Gold sparkles: a quiet star field behind the app, plus small glints on gold pieces. */
-.sparkles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.app{position:relative;z-index:1}
-.sp{position:absolute;width:var(--s);height:var(--s);opacity:0;background:radial-gradient(circle,#FFFFFF 0 16%,#FFF0B8 38%,#E8C46A 72%);clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);filter:drop-shadow(0 0 4px rgba(247,224,143,.9));animation:twinkle var(--d) ease-in-out var(--w) infinite}
-.sp.dot{clip-path:circle(50%);background:#F7E08F;filter:drop-shadow(0 0 3px rgba(247,224,143,.8))}
-@keyframes twinkle{0%,55%,100%{opacity:0;transform:scale(.3) rotate(0)}72%{opacity:var(--o);transform:scale(1) rotate(45deg)}88%{opacity:0;transform:scale(.4) rotate(90deg)}}
-.glint{position:relative}
-.glint::before,.glint::after{content:"";position:absolute;width:14px;height:14px;pointer-events:none;background:radial-gradient(circle,#FFFFFF 0 15%,#FFF6CC 35%,#E8C46A 70%);clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);filter:drop-shadow(0 0 5px rgba(255,246,204,.95));opacity:0;animation:twinkle 4.2s ease-in-out infinite}
-.glint::before{top:-5px;right:12%}
-.glint::after{bottom:-4px;left:10%;width:10px;height:10px;animation-delay:2.1s;animation-duration:5s}
-.btn.glint::before{top:-6px;right:9%}
-.logo.glint::before{top:2px;right:2px;width:18px;height:18px}
-.logo.glint::after{bottom:8px;left:-2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 <style>html,body{margin:0} :root{padding-top:env(safe-area-inset-top,0px)}</style>
+<script>
+/* Glitter finish: fine metallic flakes baked into every gold surface (static, no animation). */
+(function(){try{
+var T=128,R=2,c=document.createElement('canvas');c.width=c.height=T*R;var x=c.getContext('2d');
+function speck(n,size,col){for(var i=0;i<n;i++){var px=Math.random()*T*R,py=Math.random()*T*R,sz=size*(0.6+Math.random()*0.8)*R/2;x.fillStyle=col[Math.floor(Math.random()*col.length)];x.fillRect(px,py,sz,sz);}}
+speck(2600,1,['rgba(90,52,12,.30)','rgba(120,70,20,.25)']);            /* grain shadows */
+speck(4200,1,['rgba(255,236,170,.55)','rgba(240,190,95,.5)','rgba(214,130,52,.4)','rgba(255,214,120,.5)']); /* fine gold and copper dust */
+speck(380,1.6,['rgba(255,244,205,.85)','rgba(255,222,140,.8)','rgba(246,190,100,.75)']);          /* bright flakes */
+speck(18,2.4,['rgba(255,250,232,.95)']);                                  /* light-catching flakes */
+document.documentElement.style.setProperty('--glitter','url('+c.toDataURL()+') 0 0/'+T+'px '+T+'px');
+}catch(e){}})();
+</script>
 </head>
 <body>
-<div class="sparkles" id="sparkles" aria-hidden="true"></div>
 <div class="app" id="app" aria-live="polite"></div>
 <div class="toast" id="toast" role="status"></div>
 <noscript>Aurum needs JavaScript to run.</noscript>
-<script>
-(function(){var box=document.getElementById('sparkles');if(!box)return;var n=window.innerWidth<500?22:34;
-for(var i=0;i<n;i++){var e=document.createElement('i');var dot=false;e.className='sp'+(dot?' dot':'');
-var size=dot?(2+Math.random()*2):(6+Math.random()*9);
-e.style.cssText='left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;--s:'+size.toFixed(1)+'px;--d:'+(4+Math.random()*5).toFixed(1)+'s;--w:'+(-Math.random()*9).toFixed(1)+'s;--o:'+(.7+Math.random()*.3).toFixed(2);
-box.appendChild(e);}})();
-</script>
 <script type="module" src="./app.js"></script>
 </body>
 </html>
