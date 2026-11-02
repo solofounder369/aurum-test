@@ -196,7 +196,7 @@ function signInView(){
     try { await signInWithPopup(auth, provider); }
     catch(e){
       if (e && (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment')) { await signInWithRedirect(auth, provider); }
-      else if (e && e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') toast('Sign-in did not complete. Open this link in Chrome or Safari and try again.');
+      else if (e && e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') toast('Sign-in did not complete (' + ((e && e.code) || 'unknown') + '). Send SP a screenshot of this message.');
     }
   };
   return h('div', {class:'screen', style:'background:radial-gradient(circle at 50% 18%,#2A2215 0%,var(--ink) 58%)'},
