@@ -25,27 +25,26 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 *{box-sizing:border-box}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--gold-l);outline-offset:2px}
-@keyframes shine{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 .app{height:100%;max-width:460px;margin:0 auto;display:flex;flex-direction:column}
 .screen{flex:1;overflow-y:auto;overflow-x:hidden}
 .pad{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 28px}
 .label{font-size:11px;letter-spacing:2.4px;color:var(--muted);text-transform:uppercase;font-weight:500}
 .disp{font-family:var(--display);font-weight:600;line-height:1.1;margin:0;color:var(--gold-l);text-wrap:balance}
-.gt{background:var(--metal);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+.gt{background:var(--metal);-webkit-background-clip:text;background-clip:text;color:transparent}
 .muted{color:var(--muted)}
 .row{display:flex;align-items:center;gap:10px}
 .stack{display:flex;flex-direction:column}
-.btn{height:48px;border:0;border-radius:24px;background:var(--metal);background-size:200% auto;animation:shine 6s linear infinite;color:var(--ink);font-weight:600;font-size:15px;padding:0 20px;box-shadow:var(--glow)}
-.btn[disabled]{opacity:.4;animation:none;cursor:not-allowed}
+.btn{height:48px;border:0;border-radius:24px;background:var(--metal);color:var(--ink);font-weight:600;font-size:15px;padding:0 20px;box-shadow:var(--glow)}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
 .btn.sm{height:36px;font-size:13px;border-radius:18px;padding:0 14px;box-shadow:none}
 .ghost{height:44px;border:1px solid var(--bronze);border-radius:22px;background:transparent;color:var(--gold-l);padding:0 16px}
 .ghost.sm{height:36px;border-radius:18px;font-size:13px;padding:0 12px}
 .chip{height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--edge);background:transparent;color:var(--gold-l);font-size:13px;font-weight:500}
-.chip.on{background:var(--metal);background-size:200% auto;border-color:#F7E08F;color:var(--ink)}
+.chip.on{background:var(--metal);border-color:#F7E08F;color:var(--ink)}
 .chip.urgent.on{background:var(--urgent);border-color:var(--urgent)}
 .mono{width:46px;height:46px;border-radius:50%;background:var(--raised);border:1px solid var(--edge);display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:20px;color:var(--gold-l);flex:none;overflow:hidden}
 .mono img{width:100%;height:100%;object-fit:cover}
-.ring{padding:2px;border-radius:50%;background:var(--metal);background-size:200% auto;animation:shine 5s linear infinite;flex:none}
+.ring{padding:2px;border-radius:50%;background:var(--metal);flex:none}
 .ring .mono{border:2px solid var(--ink)}
 .field{width:100%;min-height:48px;border-radius:14px;border:1px solid var(--edge);background:var(--surface);color:var(--text);padding:12px 14px;font:15px var(--body)}
 .field::placeholder{color:var(--muted)}
@@ -66,7 +65,7 @@ textarea.field{resize:vertical;min-height:80px;line-height:1.45}
 .msgs{display:flex;flex-direction:column;gap:8px}
 .bubble{max-width:80%;padding:9px 13px 7px;border-radius:18px;line-height:1.42;font-size:14px;overflow-wrap:anywhere;white-space:pre-wrap}
 .bubble.them{background:var(--surface);border:1px solid #2A251B;border-bottom-left-radius:4px;align-self:flex-start}
-.bubble.me{background:var(--metal);background-size:200% auto;color:var(--ink);border-bottom-right-radius:4px;align-self:flex-end;box-shadow:0 4px 14px rgba(201,162,75,.22)}
+.bubble.me{background:var(--metal);color:var(--ink);border-bottom-right-radius:4px;align-self:flex-end;box-shadow:0 4px 14px rgba(201,162,75,.22)}
 .bubble .meta{font-size:10px;opacity:.75;text-align:right;margin-top:3px;white-space:normal}
 .bubble .who{font-size:11px;color:var(--gold-l);font-weight:600;margin-bottom:2px;white-space:normal}
 .prio{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:8px;margin-bottom:4px;white-space:normal}
@@ -75,33 +74,54 @@ textarea.field{resize:vertical;min-height:80px;line-height:1.45}
 .prio.urgent{background:var(--urgent);color:var(--ink)}
 .promise{align-self:center;width:min(320px,92%);border-radius:18px;border:1px solid var(--bronze);background:linear-gradient(145deg,#211B10,#0E0C08);padding:14px;text-align:center}
 .seal{width:44px;height:44px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;background:var(--edge);color:var(--ink);font-family:var(--display);font-weight:700;font-size:20px}
-.seal.on{background:var(--metal);background-size:200% auto;animation:shine 5s linear infinite;box-shadow:var(--glow)}
+.seal.on{background:var(--metal);box-shadow:var(--glow)}
 .composer{display:flex;flex-direction:column;gap:8px;padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));background:var(--night);border-top:1px solid var(--line);flex:none}
 .composer .line{display:flex;gap:8px;align-items:flex-end}
 .composer textarea{flex:1;min-width:0;min-height:44px;max-height:120px;border-radius:22px;border:1px solid var(--edge);background:var(--surface);color:var(--text);padding:11px 16px;font:14px var(--body);resize:none}
 .composer textarea:focus{border-color:var(--gold);outline:none}
-.send{width:44px;height:44px;border-radius:22px;border:0;background:var(--metal);background-size:200% auto;color:var(--ink);display:grid;place-items:center;flex:none}
+.send{width:44px;height:44px;border-radius:22px;border:0;background:var(--metal);color:var(--ink);display:grid;place-items:center;flex:none}
 .send svg{width:20px;height:20px}
 .mcard{border-radius:22px;padding:22px;aspect-ratio:1.586;max-width:100%;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#241D10 0%,#0E0C08 55%,#2E2412 100%) padding-box,var(--metal) border-box;border:1.5px solid transparent;box-shadow:0 18px 50px rgba(232,196,106,.25)}
-.tier{padding:5px 10px;border-radius:10px;background:var(--metal);background-size:200% auto;color:var(--ink);font-size:10px;font-weight:700;letter-spacing:1.5px}
+.tier{padding:5px 10px;border-radius:10px;background:var(--metal);color:var(--ink);font-size:10px;font-weight:700;letter-spacing:1.5px}
 .toast{position:fixed;left:50%;transform:translate(-50%,8px);bottom:calc(84px + env(safe-area-inset-bottom,0px));width:min(420px,calc(100% - 32px));background:var(--surface);border:1px solid var(--edge);border-radius:14px;padding:12px 14px;font-size:13px;opacity:0;transition:.2s;pointer-events:none;z-index:20}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 .opt{display:flex;flex-wrap:wrap;gap:8px}
 .opt label{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:18px;border:1px solid var(--edge);color:var(--gold-l);font-size:13px;cursor:pointer}
 .opt input{position:absolute;opacity:0;width:1px;height:1px}
 .opt input:checked + span{color:var(--ink)}
-.opt label:has(input:checked){background:var(--metal);background-size:200% auto;border-color:#F7E08F}
+.opt label:has(input:checked){background:var(--metal);border-color:#F7E08F}
 .opt label:has(input:focus-visible){outline:2px solid var(--gold-l);outline-offset:2px}
 .note{font-size:12px;color:var(--muted);line-height:1.5}
 .badge-test{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-l);border:1px solid var(--bronze);border-radius:10px;padding:3px 8px}
+/* Gold sparkles: a quiet star field behind the app, plus small glints on gold pieces. */
+.sparkles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.app{position:relative;z-index:1}
+.sp{position:absolute;width:var(--s);height:var(--s);opacity:0;background:radial-gradient(circle,#FFFFFF 0 16%,#FFF0B8 38%,#E8C46A 72%);clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);filter:drop-shadow(0 0 4px rgba(247,224,143,.9));animation:twinkle var(--d) ease-in-out var(--w) infinite}
+.sp.dot{clip-path:circle(50%);background:#F7E08F;filter:drop-shadow(0 0 3px rgba(247,224,143,.8))}
+@keyframes twinkle{0%,55%,100%{opacity:0;transform:scale(.3) rotate(0)}72%{opacity:var(--o);transform:scale(1) rotate(45deg)}88%{opacity:0;transform:scale(.4) rotate(90deg)}}
+.glint{position:relative}
+.glint::before,.glint::after{content:"";position:absolute;width:14px;height:14px;pointer-events:none;background:radial-gradient(circle,#FFFFFF 0 15%,#FFF6CC 35%,#E8C46A 70%);clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);filter:drop-shadow(0 0 5px rgba(255,246,204,.95));opacity:0;animation:twinkle 4.2s ease-in-out infinite}
+.glint::before{top:-5px;right:12%}
+.glint::after{bottom:-4px;left:10%;width:10px;height:10px;animation-delay:2.1s;animation-duration:5s}
+.btn.glint::before{top:-6px;right:9%}
+.logo.glint::before{top:2px;right:2px;width:18px;height:18px}
+.logo.glint::after{bottom:8px;left:-2px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 <style>html,body{margin:0} :root{padding-top:env(safe-area-inset-top,0px)}</style>
 </head>
 <body>
+<div class="sparkles" id="sparkles" aria-hidden="true"></div>
 <div class="app" id="app" aria-live="polite"></div>
 <div class="toast" id="toast" role="status"></div>
 <noscript>Aurum needs JavaScript to run.</noscript>
+<script>
+(function(){var box=document.getElementById('sparkles');if(!box)return;var n=window.innerWidth<500?22:34;
+for(var i=0;i<n;i++){var e=document.createElement('i');var dot=false;e.className='sp'+(dot?' dot':'');
+var size=dot?(2+Math.random()*2):(6+Math.random()*9);
+e.style.cssText='left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;--s:'+size.toFixed(1)+'px;--d:'+(4+Math.random()*5).toFixed(1)+'s;--w:'+(-Math.random()*9).toFixed(1)+'s;--o:'+(.7+Math.random()*.3).toFixed(2);
+box.appendChild(e);}})();
+</script>
 <script type="module" src="./app.js"></script>
 </body>
 </html>
