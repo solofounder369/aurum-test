@@ -84,6 +84,32 @@ function sound(k){
 }
 const seenTs = {}; let knockCount = null;
 
+/* ---------- notifications (work while Aurum is open or in the background) ---------- */
+let swReg = null;
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').then(r => { swReg = r; }).catch(() => {});
+function notifSupported(){ return 'Notification' in window && 'serviceWorker' in navigator; }
+function notifState(){ return notifSupported() ? Notification.permission : 'unsupported'; }
+function notifOn(){ try { return notifState() === 'granted' && localStorage.getItem('aurum-notify') !== 'off'; } catch(e){ return notifState() === 'granted'; } }
+async function enableNotifications(){
+  if (!notifSupported()){ toast(/iPhone|iPad/.test(navigator.userAgent) ? 'On iPhone: tap Share, then Add to Home Screen, open Aurum from there and turn this on.' : 'This browser does not support notifications. Use Chrome.'); return; }
+  const p = await Notification.requestPermission();
+  try { localStorage.setItem('aurum-notify', p === 'granted' ? 'on' : 'off'); } catch(e){}
+  if (p === 'granted'){ notify('Notifications are on', 'You will hear from Aurum when a message or knock arrives.', '', false); }
+  else toast('Notifications are blocked. Allow them in Chrome: tap the icon next to the address, then Permissions.');
+  render();
+}
+async function notify(title, body, chat, urgent){
+  if (!notifOn()) return;
+  if (!document.hidden && chat && S.chatId === chat) return; // already looking at it
+  try {
+    const reg = swReg || await navigator.serviceWorker.ready;
+    await reg.showNotification(title, {body, icon:'icons/icon-192.png', tag: chat || 'aurum', renotify: true, requireInteraction: !!urgent, vibrate: urgent ? [120,60,120,60,240] : [80], data:{chat}});
+  } catch(e){}
+}
+if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('message', e => { if (e.data && e.data.open) openWhenReady(e.data.open); });
+let pendingChat = new URLSearchParams(location.search).get('chat');
+function openWhenReady(id){ if (S.me && S.chatsReady && S.chats[id]) openChat(id); else pendingChat = id; }
+
 /* ---------- boot ---------- */
 function boot(){
   render();
@@ -115,9 +141,14 @@ function startListeners(){
     for (const id of Object.keys(S.chats)) if (id !== CIRCLE) delete S.chats[id];
     snap.docs.forEach(d => { S.chats[d.id] = d.data(); chatPing(d.id, d.data()); });
     const k = incomingKnocks().length;
-    if (knockCount !== null && k > knockCount) sound('knock');
+    if (knockCount !== null && k > knockCount){
+      sound('knock');
+      const kk = incomingKnocks().slice(-1)[0];
+      if (kk) notify('Knock from ' + handleOf(kk.by), kk.note ? '“' + kk.note + '”' : 'Would like to message you. Open Aurum to accept.', '', false);
+    }
     knockCount = k;
     S.chatsReady = true; render();
+    if (pendingChat && S.chats[pendingChat]){ const p = pendingChat; pendingChat = null; openChat(p); }
   }, () => { S.chatsReady = true; render(); }));
 
   getDoc(doc(db, 'feedback', S.me.id)).then(d => { if (d.exists()){ S.myFeedback = d.data(); render(); } }).catch(() => {});
@@ -133,7 +164,13 @@ function chatPing(id, c){
   const prev = seenTs[id];
   seenTs[id] = c.lastTs || 0;
   if (prev === undefined) return; // first load: stay quiet
-  if ((c.lastTs || 0) > prev && c.lastFrom && c.lastFrom !== S.me.id && S.chatId !== id) sound('message');
+  const fresh = (c.lastTs || 0) > prev && c.lastFrom && c.lastFrom !== S.me.id;
+  if (fresh && S.chatId !== id) sound('message');
+  if (fresh){
+    const urgent = c.lastPrio === 'urgent';
+    const from = handleOf(c.lastFrom);
+    notify(id === CIRCLE ? 'Founding Circle' : from, (id === CIRCLE ? from + ': ' : '') + (urgent ? 'URGENT · ' : c.lastPrio === 'today' ? 'Today · ' : '') + (c.lastText || 'New message'), id, urgent);
+  }
 }
 
 /* ---------- render with input preservation ---------- */
@@ -370,6 +407,12 @@ function cardTab(){
     h('label', {class:'row', style:'justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line);margin-top:10px'},
       h('span', {}, h('b', {style:'display:block;font-size:14px', text:'Aurum sounds'}), h('span', {class:'note', text:'Champagne crystal for messages, santoor for the signature.'})),
       h('input', {type:'checkbox', id:'snd-toggle', checked: soundsOn() || null, style:'width:22px;height:22px;accent-color:#C9A24B', onchange: ev => { try { localStorage.setItem('aurum-sounds', ev.target.checked ? 'on' : 'off'); } catch(e){} if (ev.target.checked) sound('message'); }})),
+    h('div', {class:'row', style:'justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--line)'},
+      h('span', {style:'flex:1;min-width:0'}, h('b', {style:'display:block;font-size:14px', text:'Notifications'}),
+        h('span', {class:'note', text: notifOn() ? 'On. Aurum alerts you about messages and knocks while it is open or in the background.' : notifState() === 'denied' ? 'Blocked in this browser. Allow them in site settings, then tap Turn on.' : 'Get an alert for new messages and knocks.'})),
+      notifOn()
+        ? h('button', {class:'ghost sm', onclick: () => { try { localStorage.setItem('aurum-notify', 'off'); } catch(e){} render(); }}, 'Turn off')
+        : h('button', {class:'btn sm', onclick: enableNotifications}, 'Turn on')),
     h('button', {class:'ghost', style:'margin-top:22px;width:100%', onclick: () => signOut(auth)}, 'Sign out'));
 }
 
@@ -466,7 +509,7 @@ async function sendMessage(){
   const btn = document.getElementById('send-btn'); if (btn) btn.disabled = true;
   try {
     await guard(addDoc(collection(db, 'chats', S.chatId, 'msgs'), msg));
-    await guard(updateDoc(doc(db, 'chats', S.chatId), {lastText: isPromise ? 'Promise: ' + text : text, lastTs: msg.ts, lastFrom: S.me.id}));
+    await guard(updateDoc(doc(db, 'chats', S.chatId), {lastText: isPromise ? 'Promise: ' + text : text, lastTs: msg.ts, lastFrom: S.me.id, lastPrio: msg.priority}));
     S.promiseMode = false; S.priority = 'whenever';
     sound('sent');
   } catch(e){ box.value = text; }
